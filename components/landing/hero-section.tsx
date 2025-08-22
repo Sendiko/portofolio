@@ -70,7 +70,7 @@ export default function HeroSection() {
 				</div>
 				<div className="col-end-13 col-start-10 2xl:col-end-13">
 					<Image
-						src={"/sendiko.png"}
+						src={"/sendiko_new.png"}
 						className="w-full"
 						width={247}
 						height={389}
