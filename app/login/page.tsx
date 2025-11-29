@@ -1,13 +1,14 @@
 "use client";
 import Navbar from "@/components/navbar";
 import axios from "axios";
-import { CircleAlert } from "lucide-react";
+import { CircleAlert, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
 
 export default function Login() {
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
+	const [showPassword, setShowPassword] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
 
@@ -92,21 +93,28 @@ export default function Login() {
 						</li>
 						<li className="flex flex-col gap-2">
 							<label htmlFor="">Password</label>
-							<input
-								onChange={(e) => setPassword(e.target.value)}
-								className="outline-none bg-zinc-900 p-3 rounded-md"
-								type="text"
-								placeholder="Masukkan password kamu"
-							/>
+							<div className="relative">
+								<input
+									onChange={(e) => setPassword(e.target.value)}
+									className="outline-none bg-zinc-900 p-3 rounded-md w-full"
+									type={showPassword ? "text" : "password"}
+									placeholder="Masukkan password kamu"
+								/>
+								<button
+									type="button"
+									onClick={() => setShowPassword(!showPassword)}
+									className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors">
+									{showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+								</button>
+							</div>
 						</li>
 						<li>
 							<button
 								type={`${formComplete ? "submit" : "button"}`}
-								className={`${
-									formComplete
-										? "cursor-pointer bg-primary hover:bg-violet-700"
-										: "cursor-not-allowed bg-gray-500"
-								} w-full text-white font-semibold p-3 rounded-md`}>
+								className={`${formComplete
+									? "cursor-pointer bg-primary hover:bg-violet-700"
+									: "cursor-not-allowed bg-gray-500"
+									} w-full text-white font-semibold p-3 rounded-md`}>
 								{loading ? "Logging in..." : "Login"}
 							</button>
 						</li>
