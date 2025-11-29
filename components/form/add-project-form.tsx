@@ -48,14 +48,26 @@ export default function AddProjectForm() {
 		try {
 			const formData = new FormData();
 
-			const techStacksArray = techStacks.split(",").map((tech) => tech.trim());
+			let techStacksArray: string[] = [];
+			try {
+				// Try parsing as JSON first (e.g. ["Kotlin", "Java"])
+				const parsed = JSON.parse(techStacks);
+				if (Array.isArray(parsed)) {
+					techStacksArray = parsed;
+				} else {
+					// If valid JSON but not an array, treat as single string or split
+					techStacksArray = [String(parsed)];
+				}
+			} catch (e) {
+				// Fallback to comma separation if not valid JSON
+				techStacksArray = techStacks.split(",").map((tech) => tech.trim());
+			}
 
 			formData.append("title", title);
 			formData.append("description", description);
 
-			techStacksArray.forEach((tech) => {
-				formData.append("techStacks", tech);
-			});
+			// Send as a single JSON string
+			formData.append("techStacks", JSON.stringify(techStacksArray.filter(Boolean)));
 
 			if (imagePreview) {
 				formData.append("imagePreview", imagePreview);
@@ -116,7 +128,7 @@ export default function AddProjectForm() {
 		try {
 			await axios.delete(`${process.env.NEXT_PUBLIC_BASE_API}/v1/project/${id}`, {
 				headers: {
-					authorization: localStorage.getItem("token"),
+					Authorization: `Bearer ${localStorage.getItem("token")}`,
 				},
 			});
 			fetchProjects();
@@ -198,11 +210,10 @@ export default function AddProjectForm() {
 					<button
 						type="submit"
 						disabled={!formComplete || loading}
-						className={`${
-							formComplete && !loading
-								? "cursor-pointer bg-primary hover:bg-violet-700"
-								: "cursor-not-allowed bg-gray-500"
-						} flex-1 text-white text-xs sm:text-base font-semibold p-3 rounded-md`}>
+						className={`${formComplete && !loading
+							? "cursor-pointer bg-primary hover:bg-violet-700"
+							: "cursor-not-allowed bg-gray-500"
+							} flex-1 text-white text-xs sm:text-base font-semibold p-3 rounded-md`}>
 						{loading ? "Processing..." : editingProject ? "Update" : "Tambah"}
 					</button>
 
@@ -269,12 +280,12 @@ export default function AddProjectForm() {
 										<td className="py-4 px-4 align-top text-xs sm:text-base font-semibold whitespace-nowrap">
 											{Array.isArray(project.techStacks)
 												? project.techStacks.map((tech, i) => (
-														<span
-															key={i}
-															className="inline-block bg-primary text-white px-2 py-1 rounded-md text-xs mr-1 mb-1">
-															{tech}
-														</span>
-												  ))
+													<span
+														key={i}
+														className="inline-block bg-primary text-white px-2 py-1 rounded-md text-xs mr-1 mb-1">
+														{tech}
+													</span>
+												))
 												: project.techStacks}
 										</td>
 										<td className="py-4 align-top">
