@@ -9,7 +9,10 @@ interface Project {
 	title: string;
 	description: string;
 	imagePreview: string;
-	techStacks: string[];
+	projectTechstack: {
+		id: string;
+		name: string;
+	}[];
 }
 
 export default function AddProjectForm() {
@@ -120,7 +123,8 @@ export default function AddProjectForm() {
 	const handleEdit = (project: Project) => {
 		setTitle(project.title);
 		setDescription(project.description);
-		setTechStacks(JSON.stringify(project.techStacks));
+		const techNames = project.projectTechstack.map((t) => t.name);
+		setTechStacks(JSON.stringify(techNames));
 		setEditingProject(project);
 	};
 
@@ -278,15 +282,14 @@ export default function AddProjectForm() {
 											{project.description}
 										</td>
 										<td className="py-4 px-4 align-top text-xs sm:text-base font-semibold whitespace-nowrap">
-											{Array.isArray(project.techStacks)
-												? project.techStacks.map((tech, i) => (
+											{Array.isArray(project.projectTechstack) &&
+												project.projectTechstack.map((tech, i) => (
 													<span
 														key={i}
 														className="inline-block bg-primary text-white px-2 py-1 rounded-md text-xs mr-1 mb-1">
-														{tech}
+														{tech.name}
 													</span>
-												))
-												: project.techStacks}
+												))}
 										</td>
 										<td className="py-4 align-top">
 											<div className="flex items-center gap-x-[16px]">
